@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THUDUC50 - Góc Confession Học Đường</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .modal-backdrop {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 min-h-screen text-slate-800 font-sans antialiased">
+
+    <!-- BIỂU MẪU KHẢO SÁT BAN ĐẦU -->
+    <div id="survey-modal" class="fixed inset-0 z-50 modal-backdrop flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-md rounded-3xl shadow-2xl p-6 sm:p-8 animate-fade-in border border-white/80">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-500 text-white text-2xl shadow-lg shadow-indigo-500/30 mb-3">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">THUDUC50 Confession</h1>
+                <p class="text-sm text-slate-500 mt-1">Khảo sát nhanh thông tin học sinh trước khi tham gia.</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Họ và tên học sinh</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <i class="fa-solid fa-user text-sm"></i>
+                        </span>
+                        <input type="text" id="survey-name" placeholder="Ví dụ: Nguyễn Văn A" 
+                            class="w-full pl-10 pr-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Lớp</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <i class="fa-solid fa-school text-sm"></i>
+                        </span>
+                        <input type="text" id="survey-class" placeholder="Ví dụ: 11A1, 12C5..." 
+                            class="w-full pl-10 pr-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">Niên khóa</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                            <i class="fa-solid fa-calendar-days text-sm"></i>
+                        </span>
+                        <input type="text" id="survey-cohort" placeholder="Ví dụ: 2024 - 2027" 
+                            class="w-full pl-10 pr-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all">
+                    </div>
+                </div>
+
+                <button type="button" onclick="submitSurvey()" class="w-full mt-2 py-3.5 px-4 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-500/30 transition-all transform active:scale-95 flex items-center justify-center gap-2">
+                    <span>Vào Không Gian Confession Ngay</span>
+                    <i class="fa-solid fa-arrow-right-long"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- GIAO DIỆN CHÍNH -->
+    <div id="main-interface" class="hidden min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="glass-card sticky top-0 z-40 border-b border-white/60 shadow-sm">
+            <div class="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white font-black text-lg shadow-md">
+                        50
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-black tracking-tight text-slate-900 leading-none">THUDUC50</h1>
+                        <span class="text-xs font-medium text-indigo-600">Góc Confession Học Đường</span>
+                    </div>
+                </div>
+                <div>
+                    <button onclick="openSurveyModal()" class="px-3 py-1.5 bg-white/80 hover:bg-white border border-slate-200 text-slate-700 text-xs font-semibold rounded-lg shadow-xs transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-id-badge text-indigo-500"></i>
+                        <span id="user-info-badge" class="max-w-[120px] truncate">Học sinh</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-1 max-w-2xl w-full mx-auto px-4 py-6 space-y-6">
+            <!-- Khung Đăng Confession -->
+            <div class="glass-card rounded-2xl shadow-xl p-5 sm:p-6 border border-white">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-pink-100 text-pink-600 flex items-center justify-center font-bold">
+                            <i class="fa-solid fa-feather-pointed text-sm"></i>
+                        </div>
+                        <h2 class="font-bold text-slate-800 text-base">Gửi tâm sự ẩn danh mới</h2>
+                    </div>
+                    <span class="text-xs text-slate-600 bg-slate-200/60 px-2.5 py-1 rounded-full font-medium">100% Bảo mật</span>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Chọn màu sắc thẻ bài</label>
+                        <div class="flex items-center gap-2.5">
+                            <button type="button" onclick="setCardColor('pink')" class="w-7 h-7 rounded-full bg-pink-200 border-2 border-slate-800 color-picker-btn transition-transform hover:scale-110 shadow-xs" data-color="pink"></button>
+                            <button type="button" onclick="setCardColor('purple')" class="w-7 h-7 rounded-full bg-purple-200 border-2 border-transparent color-picker-btn transition-transform hover:scale-110 shadow-xs" data-color="purple"></button>
+                            <button type="button" onclick="setCardColor('blue')" class="w-7 h-7 rounded-full bg-sky-200 border-2 border-transparent color-picker-btn transition-transform hover:scale-110 shadow-xs" data-color="blue"></button>
+                            <button type="button" onclick="setCardColor('amber')" class="w-7 h-7 rounded-full bg-amber-200 border-2 border-transparent color-picker-btn transition-transform hover:scale-110 shadow-xs" data-color="amber"></button>
+                            <button type="button" onclick="setCardColor('emerald')" class="w-7 h-7 rounded-full bg-emerald-200 border-2 border-transparent color-picker-btn transition-transform hover:scale-110 shadow-xs" data-color="emerald"></button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <textarea id="cfs-content" rows="4" placeholder="Hôm nay trường mình có chuyện gì vui, hoặc bạn đang tâm sự điều gì? Viết ở đây nhé..."
+                            class="w-full p-3.5 bg-white/70 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition-all resize-none"></textarea>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-1">
+                        <div class="text-xs text-slate-500 flex items-center gap-1.5">
+                            <i class="fa-solid fa-user-secret text-indigo-500"></i>
+                            <span>Gửi lên hệ thống ẩn danh</span>
+                        </div>
+                        <button onclick="postConfession()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold rounded-xl shadow-md shadow-indigo-500/20 transition-all transform active:scale-95 flex items-center gap-2">
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                            <span>Đăng Confession</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thanh tìm kiếm -->
+            <div class="relative w-full">
+                <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                    <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                </span>
+                <input type="text" id="search-input" oninput="renderConfessions()" placeholder="Tìm kiếm mã #TD50 hoặc nội dung confession..." 
+                    class="w-full pl-10 pr-4 py-2.5 bg-white/80 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-xs">
+            </div>
+
+            <!-- Danh sách Confession -->
+            <div id="confessions-list" class="space-y-4"></div>
+        </main>
+
+        <footer class="py-6 text-center text-xs text-slate-500 border-t border-white/50 mt-12">
+            <p>THUDUC50 - Nền tảng Confession Học Đường & Nghiên cứu Khoa học</p>
+        </footer>
+    </div>
+
+    <!-- MODAL ĐĂNG NHẬP ADMIN BÍ MẬT -->
+    <div id="admin-modal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+        <div class="glass-card w-full max-w-sm rounded-3xl shadow-2xl p-6 animate-fade-in border border-white/80">
+            <div class="text-center mb-5">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-900 text-white text-xl shadow-md mb-2">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900">Quản Trị Viên (Admin)</h3>
+                <p class="text-xs text-slate-500 mt-1">Nhập mã PIN để truy cập dữ liệu NCKH</p>
+            </div>
+            <div class="space-y-4">
+                <input type="password" id="admin-pin" placeholder="Mã PIN (naxinhgai)" 
+                    class="w-full px-4 py-3 bg-white/70 border border-slate-200 rounded-xl text-sm text-center tracking-widest focus:outline-none focus:ring-2 focus:ring-slate-900">
+                <div class="flex gap-2">
+                    <button type="button" onclick="closeAdminLogin()" class="flex-1 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-bold rounded-xl transition-all">Hủy</button>
+                    <button type="button" onclick="verifyAdmin()" class="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white text-sm font-bold rounded-xl transition-all">Truy cập</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BẢNG ĐIỀU KHIỂN ADMIN DASHBOARD -->
+    <div id="admin-dashboard-modal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-2 sm:p-4">
+        <div class="bg-white w-full max-w-5xl h-[90vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden animate-fade-in border border-slate-200">
+            <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold">
+                        <i class="fa-solid fa-chart-pie text-sm"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-bold text-base">Hệ Thống Quản Trị & Nghiên Cứu (Admin)</h2>
+                        <p class="text-xs text-slate-400">Quản lý bài đăng & trích xuất file dữ liệu khảo sát</p>
+                    </div>
+                </div>
+                <button onclick="closeAdminDashboard()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-300 transition-all">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="bg-slate-50 border-b border-slate-200 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-6">
+                    <div>
+                        <span class="text-xs text-slate-500 block font-medium">Tổng bài viết</span>
+                        <span id="stat-total" class="text-lg font-black text-slate-900">0</span>
+                    </div>
+                    <div class="h-8 w-px bg-slate-200"></div>
+                    <div>
+                        <span class="text-xs text-slate-500 block font-medium">Khảo sát tham gia</span>
+                        <span id="stat-surveys" class="text-lg font-black text-indigo-600">0</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="exportCSV()" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-excel"></i>
+                        <span>Xuất CSV (Excel)</span>
+                    </button>
+                    <button onclick="exportJSON()" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs transition-all flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-code"></i>
+                        <span>Xuất JSON</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-x-auto p-4 sm:p-6 bg-slate-100/50">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-xs font-bold uppercase tracking-wider text-slate-500">
+                            <th class="py-3 px-4">Mã CFS</th>
+                            <th class="py-3 px-4">Thông tin Khảo sát (Gốc)</th>
+                            <th class="py-3 px-4">Nội Dung Confession</th>
+                            <th class="py-3 px-4 text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="admin-table-body" class="divide-y divide-slate-200 text-sm"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPT LOGIC -->
+    <script>
+        const colorMap = {
+            pink: { bg: 'bg-pink-50/90', border: 'border-pink-200', badge: 'bg-pink-100 text-pink-700' },
+            purple: { bg: 'bg-purple-50/90', border: 'border-purple-200', badge: 'bg-purple-100 text-purple-700' },
+            blue: { bg: 'bg-sky-50/90', border: 'border-sky-200', badge: 'bg-sky-100 text-sky-700' },
+            amber: { bg: 'bg-amber-50/90', border: 'border-amber-200', badge: 'bg-amber-100 text-amber-700' },
+            emerald: { bg: 'bg-emerald-50/90', border: 'border-emerald-200', badge: 'bg-emerald-100 text-emerald-700' }
+        };
+
+        let selectedColor = 'pink';
+
+        // Khởi tạo mảng trống hoàn toàn (Đã xóa hết bài cũ)
+        localStorage.setItem('thuduc50_cfs', JSON.stringify([]));
+
+        function cId() {
+            return Math.random().toString(36).substr(2, 9);
+        }
+
+        // Phím tắt bí mật mở Admin: Bấm Ctrl + Shift + A hoặc gõ chữ "admin"
+        let secretKeyBuffer = '';
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'a') {
+                e.preventDefault();
+                openAdminLogin();
+                return;
+            }
+            secretKeyBuffer += e.key.toLowerCase();
+            if (secretKeyBuffer.includes('admin')) {
+                secretKeyBuffer = '';
+                openAdminLogin();
+            }
+            if (secretKeyBuffer.length > 10) secretKeyBuffer = secretKeyBuffer.slice(-5);
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = sessionStorage.getItem('thuduc50_user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                document.getElementById('user-info-badge').innerText = `${user.name} (${user.class})`;
+                document.getElementById('survey-modal').classList.add('hidden');
+                document.getElementById('main-interface').classList.remove('hidden');
+                renderConfessions();
+            } else {
+                document.getElementById('survey-modal').classList.remove('hidden');
+            }
+        });
+
+        function submitSurvey() {
+            const name = document.getElementById('survey-name').value.trim();
+            const studentClass = document.getElementById('survey-class').value.trim();
+            const cohort = document.getElementById('survey-cohort').value.trim();
+
+            const finalName = name !== "" ? name : "Học sinh ẩn danh";
+            const finalClass = studentClass !== "" ? studentClass : "12A";
+            const finalCohort = cohort !== "" ? cohort : "2024 - 2027";
+
+            const userData = { name: finalName, class: finalClass, cohort: finalCohort };
+            sessionStorage.setItem('thuduc50_user', JSON.stringify(userData));
+
+            document.getElementById('user-info-badge').innerText = `${finalName} (${finalClass})`;
+            document.getElementById('survey-modal').classList.add('hidden');
+            document.getElementById('main-interface').classList.remove('hidden');
+            renderConfessions();
+        }
+
+        function openSurveyModal() {
+            const savedUser = sessionStorage.getItem('thuduc50_user');
+            if (savedUser) {
+                const user = JSON.parse(savedUser);
+                document.getElementById('survey-name').value = user.name;
+                document.getElementById('survey-class').value = user.class;
+                document.getElementById('survey-cohort').value = user.cohort;
+            }
+            document.getElementById('survey-modal').classList.remove('hidden');
+        }
+
+        function setCardColor(color) {
+            selectedColor = color;
+            document.querySelectorAll('.color-picker-btn').forEach(btn => {
+                if (btn.dataset.color === color) {
+                    btn.classList.add('border-slate-800', 'scale-110');
+                } else {
+                    btn.classList.remove('border-slate-800', 'scale-110');
+                }
+            });
+        }
+
+        function postConfession() {
+            const user = JSON.parse(sessionStorage.getItem('thuduc50_user')) || { name: 'Học sinh', class: '12A', cohort: '2024-2027' };
+            const content = document.getElementById('cfs-content').value.trim();
+
+            if (!content) {
+                alert('Vui lòng viết nội dung confession trước khi gửi nhé!');
+                return;
+            }
+
+            let cfsList = JSON.parse(localStorage.getItem('thuduc50_cfs')) || [];
+            const newIdNumber = 1000 + cfsList.length + 1;
+
+            const newCfs = {
+                id: `TD50-${newIdNumber}`,
+                studentName: user.name,
+                studentClass: user.class,
+                studentCohort: user.cohort,
+                content: content,
+                color: selectedColor,
+                likes: 0,
+                liked: false,
+                pinned: false,
+                createdAt: new Date().toISOString(),
+                comments: []
+            };
+
+            cfsList.unshift(newCfs);
+            localStorage.setItem('thuduc50_cfs', JSON.stringify(cfsList));
+
+            document.getElementById('cfs-content').value = '';
+            renderConfessions();
+            window.scrollTo({ top: 400, behavior: 'smooth' });
+        }
+
+        function renderConfessions() {
+            const container = document.getElementById('confessions-list');
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
+            let cfsList = JSON.parse(localStorage.getItem('thuduc50_cfs')) || [];
+
+            cfsList = cfsList.filter(c => {
+                return c.id.toLowerCase().includes(searchVal) || c.content.toLowerCase().includes(searchVal);
+            });
+
+            cfsList.sort((a, b) => (b.pinned === true) - (a.pinned === true));
+
+            if (cfsList.length === 0) {
+                container.innerHTML = `
+                    <div class="glass-card rounded-2xl p-10 text-center text-slate-500">
+                        <i class="fa-regular fa-face-smile text-4xl mb-3 text-slate-400"></i>
+                        <p class="font-medium text-sm">Chưa có confession nào được đăng. Hãy là người đầu tiên chia sẻ nhé!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = cfsList.map(c => {
+                const style = colorMap[c.color] || colorMap.pink;
+                const timeAgo = getTimeAgo(c.createdAt);
+                
+                return `
+                    <div class="${style.bg} ${style.border} border rounded-2xl shadow-md p-5 sm:p-6 transition-all relative overflow-hidden">
+                        ${c.pinned ? '<div class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl shadow-xs flex items-center gap-1"><i class="fa-solid fa-thumbtack"></i> Ghim</div>' : ''}
+                        
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="font-black text-slate-900 tracking-tight text-sm">${c.id}</span>
+                            <span class="text-xs text-slate-500 font-medium">${timeAgo}</span>
+                        </div>
+
+                        <p class="text-slate-800 text-sm sm:text-base leading-relaxed whitespace-pre-line mb-4">${escapeHtml(c.content)}</p>
+
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-200/60 text-xs text-slate-600">
+                            <div class="flex items-center gap-4">
+                                <button onclick="toggleLike('${c.id}')" class="flex items-center gap-1.5 font-semibold transition-colors ${c.liked ? 'text-pink-600' : 'hover:text-pink-600'}">
+                                    <i class="${c.liked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                                    <span>${c.likes}</span>
+                                </button>
+                                <button onclick="toggleComments('${c.id}')" class="flex items-center gap-1.5 font-semibold hover:text-indigo-600">
+                                    <i class="fa-regular fa-comment"></i>
+                                    <span>${c.comments.length} bình luận</span>
+                                </button>
+                            </div>
+                            <span class="text-[11px] text-slate-400 italic">Ẩn danh học đường</span>
+                        </div>
+
+                        <div id="comments-section-${c.id}" class="hidden mt-4 pt-3 border-t border-slate-200/60 space-y-3">
+                            <div class="space-y-2 max-h-40 overflow-y-auto pr-1">
+                                ${c.comments.length === 0 ? '<p class="text-xs text-slate-400 italic text-center py-1">Chưa có bình luận nào.</p>' : 
+                                    c.comments.map(cm => `
+                                        <div class="bg-white/70 p-2.5 rounded-xl text-xs space-y-1">
+                                            <div class="flex items-center justify-between text-slate-500">
+                                                <span class="font-bold text-slate-700">${escapeHtml(cm.author)}</span>
+                                                <span>${cm.time}</span>
+                                            </div>
+                                            <p class="text-slate-800">${escapeHtml(cm.content)}</p>
+                                        </div>
+                                    `).join('')}
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" id="comment-input-${c.id}" placeholder="Viết bình luận..." 
+                                    class="flex-1 px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                                <button onclick="addComment('${c.id}')" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-xs">Gửi</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function toggleLike(id) {
+            let cfsList = JSON.parse(localStorage.getItem('thuduc50_cfs')) || [];
+            cfsList = cfsList.map(c => {
+                if (c.id === id) {
+                    if (c.liked) { c.likes -= 1; c.liked = false; }
+                    else { c.likes += 1; c.liked = true; }
+                }
+                return c;
+            });
+            localStorage.setItem('thuduc50_cfs', JSON.stringify(cfsList));
+            renderConfessions();
+        }
+
+        function toggleComments(id) {
+            document.getElementById(`comments-section-${id}`).classList.toggle('hidden');
+        }
+
+        function addComment(id) {
+            const input = document.getElementById(`comment-input-${id}`);
+            const content = input.value.trim();
+            if (!content) return;
+
+            let cfsList = JSON.parse(localStorage.getItem('thuduc50_cfs')) || [];
+            cfsList = cfsList.map(c => {
+                if (c.id === id) {
+                    c.comments.push({ id: cId(), author: 'Học sinh ẩn danh', content: content, time: 'Vừa xong' });
+                }
+                return c;
+            });
+            localStorage.setItem('thuduc50_cfs', JSON.stringify(cfsList));
+            renderConfessions();
+            document.getElementById(`comments-section-${id}`).classList.remove('hidden');
+        }
+
+        function getTimeAgo(dateString) {
+            const diff = Math.floor((new Date() - new Date(dateString)) / 1000);
+            if (diff < 60) return 'Vừa xong';
+            if (diff < 3600) return `${Math.floor(diff / 60)} phút trước`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)} giờ trước`;
+            return `${Math.floor(diff / 86400)} ngày trước`;
+        }
+
+        function escapeHtml(text) {
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Admin Handlers
+        function openAdminLogin() { document.getElementById('admin-modal').classList.remove('hidden'); }
+        function closeAdminLogin() { document.getElementById('admin-modal').classList.add('hidden'); }
+
+        function verifyAdmin() {
+            const pin = document.getElementById('admin-pin').value;
+            if (pin === 'naxinhgai') {
+                closeAdminLogin();
+                document.getElementById('admin-pin').value = '';
+                openAdminDashboard();
+            } else {
+                alert('Mã PIN không đúng!');
+            }
+        }
+
+        function openAdminDashboard() {
+            document.getElementById('admin-dashboard-modal').classList.remove('hidden');
+            renderAdminTable();
+        }
+        function closeAdminDashboard() {
+            document.getElementById('admin-dashboard-modal').classList.add('hidden');
+            renderConfessions();
+        }
+
+        function renderAdminTable() {
+            const cfsList = JSON.parse(localStorage.getItem('thuduc50_cfs')) || [];
+            document.getElementById('stat-total').innerText = cfsList.length;
+            const uniqueSurveys = new Set(cfsList.map(c => `${c.studentName}-${c.studentClass}`)).size;
+            document.getElementById('stat-surveys').innerText = uniqueSurveys;
+
+            const tbody = document.getElementById('admin-table-body');
+            if (cfsList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-slate-400 italic">Chưa có bài viết nào được gửi.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = cfsList.map(c => `
+                <tr class="hover:bg-slate-50 transition-colors">
+                    <td class="py-3 px-4 font-bold text-slate-900">${c.id}</td>
+                    <td class="py-3 px-4">
+                        <div class="font-bold text-slate-800">${escapeHtml(c.studentName)}</div>
+                        <div class="text-xs text-indigo-600 font-medium">Lớp: ${escapeHtml(c.studentClass)} | Khóa: ${escapeHtml(c.studentCohort)}</div>
+                    </td>
+                    <td class="py-3 px-4 max-w-xs">
+                        <p class="text-slate-600 truncate">${escapeHtml(c.content)}</p>
+                    </td>
+                    <td class="py-3 px-4 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="adminTogglePin('${c.id}')" title="Ghim bài" class="w-8 h-8 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-600 flex items-center justify-center"><i class="fa-solid fa-thumbtack text-xs"></i></button>
+                            <button onclick="adminDelete('${c.id}')" title="Xóa bài" class="w-8 h-8 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function adminTogglePin(id) {
+            let cfsList = JSON.parse(localStorage.getItem('thuduc50_cfs')) || [];
+            cfsList = cfsList.map(c => { if (c.id === id) c.pinned = !c.pinned; return c; });
+            localStorage.setItem('thuduc50_cfs', JSON.stringify(cfsList));
+            renderAdminTable();
+        }
+
+        function adminDelete(id) {
+            if (confirm(`Xóa bài viết ${id}?`)) {
+                let cfsList = JSON.parse(localStorage.getItem('thuduc50_cfs')) || [];
+                cfsList = cfsList.filter(c => c.id !== id);
+                localStorage.setItem('thuduc50_cfs', JSON.stringify(cfsList));
+                renderAdminTable();
+            }
+        }
+
+        function exportCSV() {
+            const cfsList = JSON.parse(localStorage.getItem('thuduc50_cfs')) || [];
+            let csvContent = "\uFEFFMã CFS,Họ Tên Học Sinh,Lớp,Niên Khóa,Nội Dung,Lượt Thích,Ngày Đăng\n";
+            cfsList.forEach(c => {
+                csvContent += [c.id, `"${c.studentName}"`, `"${c.studentClass}"`, `"${c.studentCohort}"`, `"${c.content.replace(/"/g, '""')}"`, c.likes, c.createdAt].join(",") + "\n";
+            });
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `THUDUC50_NCKH_${new Date().toISOString().slice(0,10)}.csv`;
+            a.click();
+        }
+
+        function exportJSON() {
+            const cfsList = JSON.parse(localStorage.getItem('thuduc50_cfs')) || [];
+            const a = document.createElement('a');
+            a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(cfsList, null, 2));
+            a.download = `THUDUC50_NCKH_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+        }
+    </script>
+</body>
+</html>
